@@ -106,9 +106,11 @@ export default function MobileMenu({ isOpen, onClose, currentPath }: MobileMenuP
               )}
               <span>{isAdmin ? "Admin Dashboard (Active)" : "Admin Portal"}</span>
             </div>
-            <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">
-              {isAdmin ? "Logged In" : "Owner"}
-            </span>
+            {isAdmin && (
+              <span className="text-xs bg-slate-800 text-gold-400 px-2 py-0.5 rounded">
+                Logged In
+              </span>
+            )}
           </Link>
         </div>
       </div>
