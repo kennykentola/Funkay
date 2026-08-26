@@ -1,7 +1,7 @@
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, MessageCircle, MapPin, Truck, ChevronRight } from "lucide-react";
+import { Phone, MessageCircle, MapPin, Truck } from "lucide-react";
 import { DISPLAY_PHONE, ALT_PHONE_1, ALT_PHONE_2, BUSINESS_ADDRESS, getGeneralWhatsAppUrl } from "@/lib/whatsapp";
 
 export default function Footer() {
@@ -32,7 +32,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-2 text-xs font-semibold text-emerald-400 bg-emerald-950/60 border border-emerald-800/60 px-3 py-2 rounded-lg">
               <Truck className="w-4 h-4 text-gold-400" />
-              <span>We Don&apos;t Just Rent — We Deliver</span>
+              <span>We Don&apos;t Just Rent, We Deliver</span>
             </div>
           </div>
 
@@ -54,10 +54,9 @@ export default function Footer() {
                 <li key={item.name}>
                   <Link
                     href={item.href}
-                    className="hover:text-emerald-400 flex items-center gap-1.5 transition-colors text-slate-400"
+                    className="hover:text-emerald-400 transition-colors text-slate-400"
                   >
-                    <ChevronRight className="w-3.5 h-3.5 text-emerald-500" />
-                    <span>{item.name}</span>
+                    {item.name}
                   </Link>
                 </li>
               ))}
@@ -133,10 +132,16 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Bottom copyright */}
+        {/* Bottom copyright & subtle admin link */}
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 gap-4">
           <p>© {new Date().getFullYear()} FUNKAY RENTAL SERVICES. All rights reserved.</p>
-          <p className="text-slate-500">Elebu Moniya, Ibadan, Oyo State, Nigeria</p>
+          <div className="flex items-center gap-4">
+            <span className="text-slate-500">Elebu Moniya, Ibadan, Oyo State</span>
+            <span>•</span>
+            <Link href="/admin/login" className="hover:text-slate-400 text-slate-600 transition-colors">
+              Admin Portal
+            </Link>
+          </div>
         </div>
       </div>
     </footer>

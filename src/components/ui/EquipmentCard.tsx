@@ -1,6 +1,6 @@
 import React from "react";
 import Image from "next/image";
-import { MessageCircle, CheckCircle2, Star } from "lucide-react";
+import { MessageCircle } from "lucide-react";
 import { EquipmentItem } from "@/types";
 import { getEquipmentInquiryUrl } from "@/lib/whatsapp";
 
@@ -28,8 +28,8 @@ export default function EquipmentCard({ item }: EquipmentCardProps) {
             {item.category}
           </span>
           {item.popular && (
-            <span className="bg-amber-500 text-slate-950 text-[11px] font-extrabold px-2.5 py-1 rounded-md flex items-center gap-1 shadow-sm">
-              <Star className="w-3 h-3 fill-slate-950" /> Popular
+            <span className="bg-amber-500 text-slate-950 text-[11px] font-extrabold px-2.5 py-1 rounded-md shadow-sm">
+              Popular
             </span>
           )}
           {item.isAvailable === false && (
@@ -74,8 +74,8 @@ export default function EquipmentCard({ item }: EquipmentCardProps) {
           {item.specifications && item.specifications.length > 0 && (
             <ul className="space-y-1.5 border-t border-slate-100 pt-3">
               {item.specifications.map((spec, index) => (
-                <li key={index} className="flex items-center gap-2 text-xs text-slate-700 font-medium">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                <li key={index} className="text-xs text-slate-700 font-medium flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-slate-400 shrink-0"></span>
                   <span>{spec}</span>
                 </li>
               ))}
@@ -83,7 +83,7 @@ export default function EquipmentCard({ item }: EquipmentCardProps) {
           )}
         </div>
 
-        {/* Inquire Button */}
+        {/* Inquire Button (Only WhatsApp icon) */}
         <div className="pt-2">
           <a
             href={inquiryUrl}

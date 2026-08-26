@@ -10,6 +10,7 @@ import { getEquipmentItems } from "@/lib/equipmentService";
 import { EquipmentItem } from "@/types";
 import EquipmentCard from "@/components/ui/EquipmentCard";
 import SectionHeading from "@/components/ui/SectionHeading";
+import AnimatedCard from "@/components/ui/AnimatedCard";
 
 export default function HomePage() {
   const [equipment, setEquipment] = useState<EquipmentItem[]>(SAMPLE_EQUIPMENT);
@@ -68,20 +69,15 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
             {/* Left Content */}
             <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-              <div className="inline-flex items-center gap-2 bg-emerald-950/80 border border-emerald-600/50 text-emerald-300 text-xs sm:text-sm font-bold px-3.5 py-1.5 rounded-full shadow-inner">
-                <Truck className="w-4 h-4 text-gold-400" />
-                <span>Elebu Moniya & Ibadan Event Equipment Rentals</span>
-              </div>
-
               <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight leading-[1.1] text-white">
-                Quality Event Rentals. <br />
+               Everything You Need for Your Party <br />
                 <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-400 via-teal-300 to-gold-400">
-                  Reliable Delivery.
+                 Clean Chairs, Tables & Tents Delivered Straight to Your Location.
                 </span>
               </h1>
 
               <p className="text-lg sm:text-xl text-slate-300 max-w-2xl font-normal leading-relaxed mx-auto lg:mx-0">
-                Chairs, tables, tents, canopies, tablecloths, and reception accessories delivered directly to your venue in Ibadan using our own dedicated vehicle.
+                We supply fully sanitized equipment and event accessories directly to your venue anywhere in Ibadan, taking the stress out of your logistics.
               </p>
 
               {/* CTAs */}
@@ -105,21 +101,7 @@ export default function HomePage() {
                 </Link>
               </div>
 
-              {/* Trust Badges */}
-              <div className="pt-6 border-t border-slate-800/80 grid grid-cols-3 gap-4 text-center lg:text-left">
-                <div>
-                  <p className="text-xl sm:text-2xl font-extrabold text-white">Own Fleet</p>
-                  <p className="text-xs text-slate-400 font-medium">Safe Doorstep Delivery</p>
-                </div>
-                <div>
-                  <p className="text-xl sm:text-2xl font-extrabold text-gold-400"> Clean</p>
-                  <p className="text-xs text-slate-400 font-medium">Sanitized Equipment</p>
-                </div>
-                <div>
-                  <p className="text-xl sm:text-2xl font-extrabold text-emerald-400">Instant</p>
-                  <p className="text-xs text-slate-400 font-medium">WhatsApp Quotation</p>
-                </div>
-              </div>
+
             </div>
 
             {/* Right Card / Visual Showcase */}
@@ -160,32 +142,33 @@ export default function HomePage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {categories.map((cat, idx) => (
-            <Link
-              key={idx}
-              href={cat.href}
-              className="group relative rounded-2xl overflow-hidden h-64 border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300"
-            >
-              <Image
-                src={cat.image}
-                alt={cat.title}
-                fill
-                loading="lazy"
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover group-hover:scale-110 transition-transform duration-700"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
-              <div className="absolute bottom-5 left-5 right-5 text-white flex justify-between items-end">
-                <div>
-                  <span className="text-xs font-bold text-emerald-400 block mb-1">{cat.count}</span>
-                  <h3 className="text-2xl font-bold tracking-tight text-white group-hover:text-gold-300 transition-colors">
-                    {cat.title}
-                  </h3>
+            <AnimatedCard key={idx} delay={idx * 100}>
+              <Link
+                href={cat.href}
+                className="group relative rounded-2xl overflow-hidden h-64 border border-slate-200 shadow-md hover:shadow-xl transition-all duration-300 block"
+              >
+                <Image
+                  src={cat.image}
+                  alt={cat.title}
+                  fill
+                  loading="lazy"
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover group-hover:scale-110 transition-transform duration-700"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-900/40 to-transparent" />
+                <div className="absolute bottom-5 left-5 right-5 text-white flex justify-between items-end">
+                  <div>
+                    <span className="text-xs font-bold text-emerald-400 block mb-1">{cat.count}</span>
+                    <h3 className="text-2xl font-bold tracking-tight text-white group-hover:text-gold-300 transition-colors">
+                      {cat.title}
+                    </h3>
+                  </div>
+                  <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-brand-700 group-hover:text-white transition-all">
+                    <ArrowRight className="w-4 h-4" />
+                  </div>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center group-hover:bg-brand-700 group-hover:text-white transition-all">
-                  <ArrowRight className="w-4 h-4" />
-                </div>
-              </div>
-            </Link>
+              </Link>
+            </AnimatedCard>
           ))}
         </div>
       </section>
@@ -215,11 +198,8 @@ export default function HomePage() {
 
             {/* Copy */}
             <div className="space-y-6">
-              <span className="text-xs font-extrabold uppercase tracking-widest text-gold-400 bg-gold-400/10 px-3 py-1 rounded-full border border-gold-400/20">
-                Delivery Advantage
-              </span>
               <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight text-white leading-tight">
-                &ldquo;We Don&apos;t Just Rent — We Deliver.&rdquo;
+                We Don&apos;t Just Rent, We Deliver.
               </h2>
               <p className="text-slate-300 text-base sm:text-lg leading-relaxed">
                 At FUNKAY RENTAL SERVICES, we maintain our own dedicated transport vehicle. You don&apos;t need to worry about organizing external drivers or risky transport. We pack, load, and deliver your chairs, tables, and tents directly to your venue location in Moniya, Ibadan, and surrounding areas.
@@ -232,8 +212,8 @@ export default function HomePage() {
                   "Careful loading & unloading by trained handlers",
                   "Full coverage across Moniya, Elebu, and greater Ibadan",
                 ].map((feat, i) => (
-                  <div key={i} className="flex items-start gap-3 text-sm text-slate-200 font-semibold">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
+                  <div key={i} className="flex items-start gap-3 text-sm text-slate-200 font-medium">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 shrink-0 mt-2"></span>
                     <span>{feat}</span>
                   </div>
                 ))}
@@ -264,10 +244,7 @@ export default function HomePage() {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between mb-10 gap-4">
           <div>
-            <span className="text-xs uppercase font-extrabold tracking-widest text-brand-700 bg-brand-50 px-3 py-1 rounded-full border border-brand-200">
-              Quality Inventory
-            </span>
-            <h2 className="text-3xl font-extrabold text-slate-900 mt-2">
+            <h2 className="text-3xl font-extrabold text-slate-900">
               Featured Event Equipment
             </h2>
           </div>
@@ -281,8 +258,10 @@ export default function HomePage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          {popularItems.map((item) => (
-            <EquipmentCard key={item.id} item={item} />
+          {popularItems.map((item, idx) => (
+            <AnimatedCard key={item.id} delay={idx * 120}>
+              <EquipmentCard item={item} />
+            </AnimatedCard>
           ))}
         </div>
       </section>

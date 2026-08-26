@@ -37,7 +37,7 @@ export const SAMPLE_EQUIPMENT: EquipmentItem[] = [
     price: 1500,
     priceUnit: "per day",
     isAvailable: true,
-    specifications: ["Sturdy wooden top with metal legs", "4ft (48-inch) diameter", "Pairs with round tablecloths"],
+    specifications: ["Durable molded plastic surface with foldable legs", "4ft (48-inch) diameter", "Pairs with round tablecloths"],
     popular: true,
   },
   {
@@ -99,7 +99,7 @@ export const SAMPLE_EQUIPMENT: EquipmentItem[] = [
     price: 65000,
     priceUnit: "per event",
     isAvailable: true,
-    specifications: ["Capacity for up to 200 seated guests", "Customizable sidewalls & curtains", "Complete weatherproofing"],
+    specifications: ["Capacity for up to 200 seated guests", "Complete weatherproofing"],
     popular: true,
   },
 

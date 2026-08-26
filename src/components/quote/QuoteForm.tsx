@@ -361,7 +361,7 @@ export default function QuoteForm() {
               </div>
               <div>
                 <p className="text-xs uppercase font-extrabold tracking-wider text-emerald-300">Estimated Rental Subtotal</p>
-                <p className="text-xs text-emerald-200">Based on live pricing (excluding logistics)</p>
+                <p className="text-xs text-emerald-200">Current total for items only. Delivery/transport fee will be added based on your venue location.</p>
               </div>
             </div>
             <div className="text-right">
