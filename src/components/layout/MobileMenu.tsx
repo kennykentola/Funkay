@@ -2,7 +2,8 @@
 
 import React from "react";
 import Link from "next/link";
-import { Phone, MessageCircle, Truck, Calendar } from "lucide-react";
+import Image from "next/image";
+import { Phone, MessageCircle, Calendar } from "lucide-react";
 import { DISPLAY_PHONE, ALT_PHONE_1, getGeneralWhatsAppUrl } from "@/lib/whatsapp";
 
 interface MobileMenuProps {
@@ -19,9 +20,14 @@ export default function MobileMenu({ isOpen, onClose, navLinks, currentPath }: M
     <div className="fixed inset-0 z-50 md:hidden flex flex-col bg-white">
       {/* Drawer Header */}
       <div className="flex items-center justify-between p-4 border-b border-slate-100 bg-slate-50">
-        <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-lg bg-brand-700 text-gold-400 flex items-center justify-center">
-            <Truck className="w-5 h-5" />
+        <div className="flex items-center gap-3">
+          <div className="relative w-10 h-10 rounded-xl overflow-hidden bg-white border border-slate-200">
+            <Image
+              src="/images/logo.png"
+              alt="FUNKAY Rental Services Logo"
+              fill
+              className="object-contain p-0.5"
+            />
           </div>
           <div>
             <h2 className="font-extrabold text-slate-900 text-base leading-none">FUNKAY</h2>

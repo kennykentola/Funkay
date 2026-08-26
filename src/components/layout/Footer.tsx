@@ -1,5 +1,6 @@
 import React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Phone, MessageCircle, MapPin, Truck, ChevronRight } from "lucide-react";
 import { DISPLAY_PHONE, ALT_PHONE_1, ALT_PHONE_2, BUSINESS_ADDRESS, getGeneralWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -11,8 +12,13 @@ export default function Footer() {
           {/* Brand Info */}
           <div className="space-y-4">
             <Link href="/" className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-brand-700 text-gold-400 flex items-center justify-center shadow-lg shadow-brand-700/30">
-                <Truck className="w-5 h-5 stroke-[2.2]" />
+              <div className="relative w-11 h-11 rounded-xl overflow-hidden bg-slate-950 border border-slate-700">
+                <Image
+                  src="/images/logo.png"
+                  alt="FUNKAY Rental Services Logo"
+                  fill
+                  className="object-contain p-0.5"
+                />
               </div>
               <div className="flex flex-col">
                 <span className="font-extrabold text-xl tracking-tight text-white">FUNKAY</span>

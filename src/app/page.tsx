@@ -112,7 +112,7 @@ export default function HomePage() {
                   <p className="text-xs text-slate-400 font-medium">Safe Doorstep Delivery</p>
                 </div>
                 <div>
-                  <p className="text-xl sm:text-2xl font-extrabold text-gold-400">100% Clean</p>
+                  <p className="text-xl sm:text-2xl font-extrabold text-gold-400"> Clean</p>
                   <p className="text-xs text-slate-400 font-medium">Sanitized Equipment</p>
                 </div>
                 <div>
@@ -134,7 +134,7 @@ export default function HomePage() {
                   className="object-cover w-full h-[380px] sm:h-[450px] group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-90" />
-                
+
                 <div className="absolute bottom-6 left-6 right-6 p-4 rounded-2xl bg-slate-900/90 backdrop-blur-md border border-slate-700/80 text-white space-y-2">
                   <div className="flex items-center gap-2 text-gold-400 text-xs font-bold uppercase tracking-wider">
                     <Sparkles className="w-4 h-4" /> Ready for your big day
