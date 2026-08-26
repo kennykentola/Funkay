@@ -1,10 +1,12 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Phone, MessageCircle, Calendar } from "lucide-react";
+import { Phone, MessageCircle, Calendar, ShieldCheck, Lock } from "lucide-react";
 import { DISPLAY_PHONE, ALT_PHONE_1, getGeneralWhatsAppUrl } from "@/lib/whatsapp";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "@/lib/firebase";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -13,8 +15,26 @@ interface MobileMenuProps {
   currentPath: string;
 }
 
-export default function MobileMenu({ isOpen, onClose, navLinks, currentPath }: MobileMenuProps) {
+export default function MobileMenu({ isOpen, onClose, currentPath }: MobileMenuProps) {
+  const [isAdmin, setIsAdmin] = useState(false);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user: any) => {
+      setIsAdmin(!!user);
+    });
+    return () => unsubscribe();
+  }, []);
+
   if (!isOpen) return null;
+
+  const baseNavLinks = [
+    { name: "Home", href: "/" },
+    { name: "Equipment", href: "/equipment" },
+    { name: "How It Works", href: "/how-it-works" },
+    { name: "Gallery", href: "/gallery" },
+    { name: "About Us", href: "/about" },
+    { name: "Contact", href: "/contact" },
+  ];
 
   return (
     <div className="fixed inset-0 z-50 md:hidden flex flex-col bg-white">
@@ -48,7 +68,7 @@ export default function MobileMenu({ isOpen, onClose, navLinks, currentPath }: M
 
       {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto p-4 space-y-1">
-        {navLinks.map((link) => {
+        {baseNavLinks.map((link) => {
           const isActive = currentPath === link.href;
           return (
             <Link
@@ -66,6 +86,31 @@ export default function MobileMenu({ isOpen, onClose, navLinks, currentPath }: M
             </Link>
           );
         })}
+
+        {/* Dedicated Admin Portal Link for Mobile & PWA Mode */}
+        <div className="pt-3 mt-2 border-t border-slate-100">
+          <Link
+            href="/admin"
+            onClick={onClose}
+            className={`flex items-center justify-between p-3.5 rounded-xl font-bold text-sm transition-all ${
+              isAdmin
+                ? "bg-slate-900 text-gold-400 border border-gold-500/40 shadow-sm"
+                : "bg-slate-100 text-slate-700 hover:bg-slate-200"
+            }`}
+          >
+            <div className="flex items-center gap-2">
+              {isAdmin ? (
+                <ShieldCheck className="w-4 h-4 text-gold-400" />
+              ) : (
+                <Lock className="w-4 h-4 text-slate-500" />
+              )}
+              <span>{isAdmin ? "Admin Dashboard (Active)" : "Admin Portal"}</span>
+            </div>
+            <span className="text-xs bg-slate-800 text-slate-300 px-2 py-0.5 rounded">
+              {isAdmin ? "Logged In" : "Owner"}
+            </span>
+          </Link>
+        </div>
       </div>
 
       {/* Mobile CTA Footer */}
