@@ -60,7 +60,7 @@ export default function PWAInstallPrompt() {
         className="flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs shadow-md transition-all"
       >
         <Download className="w-4 h-4" />
-        <span>Add to Home Screen</span>
+        <span>install</span>
       </button>
     </div>
   );

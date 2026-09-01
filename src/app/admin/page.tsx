@@ -19,6 +19,7 @@ import {
   deleteGalleryItem,
   seedInitialGallery,
 } from "@/lib/galleryService";
+import { uploadImageToStorage } from "@/lib/storageService";
 import { EquipmentItem, CategoryType, GalleryItem } from "@/types";
 import {
   LogOut,
@@ -49,50 +50,6 @@ import Image from "next/image";
 const CATEGORIES: CategoryType[] = ["All", "Chairs", "Tables", "Tents", "Tablecloths", "Extras"];
 const GALLERY_CATEGORIES = ["Weddings", "Birthdays", "Church Events", "Delivery", "Setups"] as const;
 
-/**
- * Helper to compress and convert an uploaded image file into a compact Base64 Data URL.
- */
-function processUploadedImageFile(file: File): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new window.Image();
-      img.onload = () => {
-        const canvas = document.createElement("canvas");
-        const MAX_WIDTH = 800;
-        const MAX_HEIGHT = 800;
-        let width = img.width;
-        let height = img.height;
-
-        if (width > height) {
-          if (width > MAX_WIDTH) {
-            height = Math.round((height * MAX_WIDTH) / width);
-            width = MAX_WIDTH;
-          }
-        } else {
-          if (height > MAX_HEIGHT) {
-            width = Math.round((width * MAX_HEIGHT) / height);
-            height = MAX_HEIGHT;
-          }
-        }
-
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext("2d");
-        ctx?.drawImage(img, 0, 0, width, height);
-
-        // Compress to JPEG at 80% quality
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.8);
-        resolve(dataUrl);
-      };
-      img.onerror = () => reject(new Error("Failed to load image file."));
-      img.src = e.target?.result as string;
-    };
-    reader.onerror = () => reject(new Error("Failed to read image file."));
-    reader.readAsDataURL(file);
-  });
-}
-
 export default function AdminDashboardPage() {
   const [user, setUser] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
@@ -108,6 +65,10 @@ export default function AdminDashboardPage() {
   const [galleryItems, setGalleryItems] = useState<GalleryItem[]>([]);
   const [loadingGallery, setLoadingGallery] = useState(true);
   const [gallerySearchQuery, setGallerySearchQuery] = useState("");
+
+  // Upload state for Firebase Storage
+  const [uploadingImage, setUploadingImage] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
 
   // Notice state
   const [statusMessage, setStatusMessage] = useState<{ type: "success" | "error"; text: string } | null>(null);
@@ -159,8 +120,11 @@ export default function AdminDashboardPage() {
       setUser(currentUser);
       setAuthLoading(false);
       if (currentUser) {
+        document.cookie = "admin_session=true; Path=/; SameSite=Lax; Max-Age=86400";
         loadItemsData();
         loadGalleryData();
+      } else {
+        document.cookie = "admin_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT";
       }
     });
 
@@ -174,6 +138,7 @@ export default function AdminDashboardPage() {
 
     try {
       await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      document.cookie = "admin_session=true; Path=/; SameSite=Lax; Max-Age=86400";
     } catch (err: any) {
       console.error("Auth error:", err);
       if (
@@ -228,6 +193,7 @@ export default function AdminDashboardPage() {
   const handleLogout = async () => {
     try {
       await signOut(auth);
+      document.cookie = "admin_session=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT";
       setUser(null);
       setStatusMessage({ type: "success", text: "Signed out successfully." });
     } catch (err: any) {
@@ -410,18 +376,36 @@ export default function AdminDashboardPage() {
     }
   };
 
-  // Image Upload Handlers
-  const handleImageFileUpload = async (e: React.ChangeEvent<HTMLInputElement>, target: "new" | "edit" | "galNew" | "galEdit") => {
+  // Firebase Storage Image Upload Handler
+  const handleImageFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    target: "new" | "edit" | "galNew" | "galEdit"
+  ) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    setUploadingImage(true);
+    setUploadProgress(0);
+    setStatusMessage({ type: "success", text: `Uploading "${file.name}" to Cloud Storage...` });
+
     try {
-      const dataUrl = await processUploadedImageFile(file);
-      if (target === "new") setNewItem((prev) => ({ ...prev, image: dataUrl }));
-      else if (target === "edit" && editingItem) setEditingItem((prev) => prev ? { ...prev, image: dataUrl } : null);
-      else if (target === "galNew") setNewGalleryItem((prev) => ({ ...prev, image: dataUrl }));
-      else if (target === "galEdit" && editingGalleryItem) setEditingGalleryItem((prev) => prev ? { ...prev, image: dataUrl } : null);
+      const folder = target.startsWith("gal") ? "gallery" : "equipment";
+      const downloadUrl = await uploadImageToStorage(file, folder, (progress) => {
+        setUploadProgress(progress);
+      });
+
+      if (target === "new") setNewItem((prev) => ({ ...prev, image: downloadUrl }));
+      else if (target === "edit" && editingItem) setEditingItem((prev) => (prev ? { ...prev, image: downloadUrl } : null));
+      else if (target === "galNew") setNewGalleryItem((prev) => ({ ...prev, image: downloadUrl }));
+      else if (target === "galEdit" && editingGalleryItem) setEditingGalleryItem((prev) => (prev ? { ...prev, image: downloadUrl } : null));
+
+      setStatusMessage({ type: "success", text: `Image uploaded successfully to Firebase Storage!` });
     } catch (err: any) {
-      setStatusMessage({ type: "error", text: "Failed to process uploaded image file." });
+      console.error("Upload error:", err);
+      setStatusMessage({ type: "error", text: `Upload failed: ${err.message || "Could not upload to Firebase Storage."}` });
+    } finally {
+      setUploadingImage(false);
+      setUploadProgress(0);
     }
   };
 
@@ -1005,12 +989,13 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block font-bold text-slate-700 mb-1">Equipment Image</label>
                     <div className="space-y-2">
-                      <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-700 font-bold hover:bg-slate-200 cursor-pointer">
-                        <Upload className="w-4 h-4 text-brand-600" />
-                        <span>Choose File from Device...</span>
+                      <label className={`flex items-center justify-center gap-2 px-3 py-2 rounded-xl border text-slate-700 font-bold transition-all ${uploadingImage ? "bg-amber-50 border-amber-300 text-amber-800 cursor-wait" : "bg-slate-100 border-slate-300 hover:bg-slate-200 cursor-pointer"}`}>
+                        <Upload className={`w-4 h-4 ${uploadingImage ? "animate-bounce text-amber-600" : "text-brand-600"}`} />
+                        <span>{uploadingImage ? `Uploading to Storage (${uploadProgress}%)...` : "Choose File from Device..."}</span>
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={uploadingImage}
                           onChange={(e) => handleImageFileUpload(e, "new")}
                           className="hidden"
                         />
@@ -1132,12 +1117,13 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block font-bold text-slate-700 mb-1">Equipment Image</label>
                     <div className="space-y-2">
-                      <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-700 font-bold hover:bg-slate-200 cursor-pointer">
-                        <Upload className="w-4 h-4 text-brand-600" />
-                        <span>Upload New File...</span>
+                      <label className={`flex items-center justify-center gap-2 px-3 py-2 rounded-xl border text-slate-700 font-bold transition-all ${uploadingImage ? "bg-amber-50 border-amber-300 text-amber-800 cursor-wait" : "bg-slate-100 border-slate-300 hover:bg-slate-200 cursor-pointer"}`}>
+                        <Upload className={`w-4 h-4 ${uploadingImage ? "animate-bounce text-amber-600" : "text-brand-600"}`} />
+                        <span>{uploadingImage ? `Uploading (${uploadProgress}%)...` : "Upload New File..."}</span>
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={uploadingImage}
                           onChange={(e) => handleImageFileUpload(e, "edit")}
                           className="hidden"
                         />
@@ -1258,12 +1244,13 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block font-bold text-slate-700 mb-1">Photo Image *</label>
                     <div className="space-y-2">
-                      <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-700 font-bold hover:bg-slate-200 cursor-pointer">
-                        <Upload className="w-4 h-4 text-brand-600" />
-                        <span>Choose File from Device...</span>
+                      <label className={`flex items-center justify-center gap-2 px-3 py-2 rounded-xl border text-slate-700 font-bold transition-all ${uploadingImage ? "bg-amber-50 border-amber-300 text-amber-800 cursor-wait" : "bg-slate-100 border-slate-300 hover:bg-slate-200 cursor-pointer"}`}>
+                        <Upload className={`w-4 h-4 ${uploadingImage ? "animate-bounce text-amber-600" : "text-brand-600"}`} />
+                        <span>{uploadingImage ? `Uploading Photo (${uploadProgress}%)...` : "Choose File from Device..."}</span>
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={uploadingImage}
                           onChange={(e) => handleImageFileUpload(e, "galNew")}
                           className="hidden"
                         />
@@ -1357,12 +1344,13 @@ export default function AdminDashboardPage() {
                   <div>
                     <label className="block font-bold text-slate-700 mb-1">Photo Image *</label>
                     <div className="space-y-2">
-                      <label className="flex items-center justify-center gap-2 px-3 py-2 rounded-xl bg-slate-100 border border-slate-300 text-slate-700 font-bold hover:bg-slate-200 cursor-pointer">
-                        <Upload className="w-4 h-4 text-brand-600" />
-                        <span>Upload New File...</span>
+                      <label className={`flex items-center justify-center gap-2 px-3 py-2 rounded-xl border text-slate-700 font-bold transition-all ${uploadingImage ? "bg-amber-50 border-amber-300 text-amber-800 cursor-wait" : "bg-slate-100 border-slate-300 hover:bg-slate-200 cursor-pointer"}`}>
+                        <Upload className={`w-4 h-4 ${uploadingImage ? "animate-bounce text-amber-600" : "text-brand-600"}`} />
+                        <span>{uploadingImage ? `Uploading (${uploadProgress}%)...` : "Upload New File..."}</span>
                         <input
                           type="file"
                           accept="image/*"
+                          disabled={uploadingImage}
                           onChange={(e) => handleImageFileUpload(e, "galEdit")}
                           className="hidden"
                         />

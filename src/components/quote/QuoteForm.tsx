@@ -7,8 +7,14 @@ import { getEquipmentItems } from "@/lib/equipmentService";
 import { getQuoteWhatsAppUrl } from "@/lib/whatsapp";
 import QuoteSuccessModal from "./QuoteSuccessModal";
 
-export default function QuoteForm() {
-  const [equipmentList, setEquipmentList] = useState<EquipmentItem[]>([]);
+interface QuoteFormProps {
+  initialEquipment?: EquipmentItem[];
+}
+
+export default function QuoteForm({ initialEquipment = [] }: QuoteFormProps) {
+  const [equipmentList, setEquipmentList] = useState<EquipmentItem[]>(
+    initialEquipment.filter((i) => i.isAvailable !== false)
+  );
   const [quantities, setQuantities] = useState<{ [id: string]: number }>({});
   
   const [formData, setFormData] = useState<QuoteFormData>({
@@ -26,6 +32,7 @@ export default function QuoteForm() {
   const [submittedUrl, setSubmittedUrl] = useState<string | null>(null);
 
   useEffect(() => {
+    if (initialEquipment.length > 0) return;
     async function loadEquipment() {
       try {
         const items = await getEquipmentItems();
@@ -35,7 +42,7 @@ export default function QuoteForm() {
       }
     }
     loadEquipment();
-  }, []);
+  }, [initialEquipment]);
 
   const getItemFormattedText = (item: EquipmentItem, qty: number) => {
     const isChair = item.category === "Chairs" || (item.priceUnit && item.priceUnit.includes("dozen"));

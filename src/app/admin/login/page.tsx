@@ -21,6 +21,7 @@ export default function AdminLoginPage() {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+      document.cookie = "admin_session=true; Path=/; SameSite=Lax; Max-Age=86400";
       router.push("/admin");
     } catch (err: any) {
       console.error("Auth error:", err);

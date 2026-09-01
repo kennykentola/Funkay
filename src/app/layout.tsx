@@ -5,7 +5,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import FloatingWhatsAppButton from "@/components/ui/FloatingWhatsAppButton";
 import PWAInstallPrompt from "@/components/ui/PWAInstallPrompt";
-import { BUSINESS_ADDRESS, DISPLAY_PHONE } from "@/lib/whatsapp";
+import { BUSINESS_ADDRESS, DISPLAY_PHONE, ALT_PHONE_1, ALT_PHONE_2 } from "@/lib/whatsapp";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -16,24 +16,38 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.URL || "https://funkay.vercel.app"),
-  title: "FUNKAY Rental Services | Event Equipment Rental in Ibadan",
+  title: {
+    default: "FUNKAY RENTAL SERVICES — Event Equipment Rental in Moniya & Ibadan, Nigeria",
+    template: "%s | FUNKAY RENTAL SERVICES Ibadan",
+  },
   description:
-    "Rent chairs, tables, tents, canopies and event equipment from FUNKAY Rental Services in Moniya, Ibadan. Request a quote and arrange delivery through WhatsApp.",
+    "FUNKAY RENTAL SERVICES is the premier local event equipment rental business in Elebu Moniya, Ibadan, Oyo State. Rent chairs, tables, tents/canopies, tablecloths & accessories with dedicated delivery transport.",
   keywords: [
-    "Event rental Ibadan",
-    "Chair rental Moniya",
+    "Funkay",
+    "FUNKAY",
+    "Funkay Rental Services",
+    "Funkay Rentals",
+    "Funkay Rentals Ibadan",
+    "Funkay Moniya",
+    "Funkay Elebu",
+    "Funkay Event Rentals",
+    "Event equipment rental Ibadan",
+    "Chair rental Moniya Ibadan",
+    "Canopy tent rental Moniya Elebu",
     "Table rental Elebu Moniya",
-    "Canopy rental Ibadan",
-    "FUNKAY Rental Services",
-    "Wedding equipment Ibadan",
-    "Event setup Ibadan Oyo State",
+    "Banquet chair rental Ibadan",
+    "Chiavari chair rental Ibadan",
+    "Tablecloth rental Ibadan Oyo State",
+    "Wedding rentals Ibadan",
+    "Party rental equipment Moniya",
   ],
-  authors: [{ name: "FUNKAY Rental Services" }],
+  authors: [{ name: "FUNKAY RENTAL SERVICES", url: "https://funkay.vercel.app" }],
+  publisher: "FUNKAY RENTAL SERVICES",
   manifest: "/manifest.webmanifest",
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "FUNKAY",
+    title: "FUNKAY RENTAL SERVICES",
   },
   icons: {
     icon: "/favicon.ico",
@@ -44,21 +58,30 @@ export const metadata: Metadata = {
     google: "JQrZWT5k8RI6yHvZbLZE3frl6tdc719De-Q_4NHjpP4",
   },
   openGraph: {
-    title: "FUNKAY Rental Services | Quality Event Rentals & Reliable Delivery",
+    title: "FUNKAY RENTAL SERVICES — Premier Event Rentals in Moniya & Ibadan",
     description:
-      "Chairs, tables, tents/canopies, tablecloths, and event accessories in Elebu Moniya, Ibadan. Direct delivery with our own vehicle.",
+      "High quality chairs, tables, tents, canopies & tablecloths for weddings, birthdays, and church events in Ibadan. Dedicated delivery vehicle service.",
     url: "https://funkay.vercel.app",
-    siteName: "FUNKAY Rental Services",
+    siteName: "FUNKAY RENTAL SERVICES",
     images: [
       {
         url: "/images/hero-event-setup.jpg",
         width: 1200,
         height: 630,
-        alt: "FUNKAY Rental Services Event Setup in Ibadan",
+        alt: "FUNKAY RENTAL SERVICES Event Equipment Setup in Moniya Ibadan",
       },
     ],
     locale: "en_NG",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "FUNKAY RENTAL SERVICES — Event Rentals in Ibadan",
+    description: "Rent chairs, tables, canopies & tablecloths in Elebu Moniya, Ibadan with reliable doorstep delivery.",
+    images: ["/images/hero-event-setup.jpg"],
+  },
+  alternates: {
+    canonical: "https://funkay.vercel.app",
   },
 };
 
@@ -67,28 +90,83 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Local Business Structured Data for SEO
+  // Comprehensive Schema.org JSON-LD Structured Data for Max Google Ranking
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
+    "@type": ["LocalBusiness", "EquipmentRental"],
+    "@id": "https://funkay.vercel.app/#organization",
     "name": "FUNKAY RENTAL SERVICES",
-    "image": "https://funkay.vercel.app/images/hero-event-setup.jpg",
+    "alternateName": [
+      "Funkay Rentals",
+      "Funkay Event Rentals",
+      "Funkay Rentals Ibadan",
+      "Funkay Moniya",
+      "Funkay Rental Services Ibadan"
+    ],
+    "legalName": "FUNKAY RENTAL SERVICES",
+    "image": [
+      "https://funkay.vercel.app/images/hero-event-setup.jpg",
+      "https://funkay.vercel.app/images/delivery-vehicle.jpg",
+      "https://funkay.vercel.app/images/chairs-rental.jpg"
+    ],
+    "logo": "https://funkay.vercel.app/icon.jpg",
     "url": "https://funkay.vercel.app",
-    "telephone": DISPLAY_PHONE,
+    "telephone": [DISPLAY_PHONE, ALT_PHONE_1, ALT_PHONE_2],
+    "email": "info@funkayrentals.com",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": BUSINESS_ADDRESS,
-      "addressLocality": "Ibadan",
+      "addressLocality": "Moniya, Ibadan",
       "addressRegion": "Oyo State",
+      "postalCode": "200213",
       "addressCountry": "NG"
     },
     "geo": {
       "@type": "GeoCoordinates",
-      "latitude": 7.5147,
-      "longitude": 3.9161
+      "latitude": 7.5255,
+      "longitude": 3.9103
     },
-    "description": "Local event equipment rental business in Moniya, Ibadan supplying chairs, tables, canopies, and tablecloths with dedicated delivery vehicle transport.",
-    "priceRange": "₦₦"
+    "openingHoursSpecification": [
+      {
+        "@type": "OpeningHoursSpecification",
+        "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+        "opens": "07:00",
+        "closes": "20:00"
+      }
+    ],
+    "areaServed": [
+      { "@type": "City", "name": "Ibadan" },
+      { "@type": "AdministrativeArea", "name": "Moniya" },
+      { "@type": "AdministrativeArea", "name": "Elebu" },
+      { "@type": "AdministrativeArea", "name": "Bodija" },
+      { "@type": "AdministrativeArea", "name": "Akobo" },
+      { "@type": "AdministrativeArea", "name": "Ring Road" },
+      { "@type": "AdministrativeArea", "name": "Challenge" },
+      { "@type": "State", "name": "Oyo State" }
+    ],
+    "description": "FUNKAY RENTAL SERVICES is Ibadan's top event equipment rental business in Elebu Moniya supplying plastic chairs, banquet tables, canopy tents, tablecloths, and delivery vehicle transport.",
+    "priceRange": "₦₦",
+    "hasOfferCatalog": {
+      "@type": "OfferCatalog",
+      "name": "Event Equipment Rental Catalog",
+      "itemListElement": [
+        {
+          "@type": "OfferCatalog",
+          "name": "Chairs & Seating",
+          "description": "Altak plastic chairs, Chiavari chairs, banquet seating"
+        },
+        {
+          "@type": "OfferCatalog",
+          "name": "Tents & Canopies",
+          "description": "High-peak white canopy tents, marquee event tents"
+        },
+        {
+          "@type": "OfferCatalog",
+          "name": "Banquet Tables & Linens",
+          "description": "Round banquet tables, rectangular tables, premium tablecloths"
+        }
+      ]
+    }
   };
 
   return (

@@ -1,10 +1,23 @@
 import React from "react";
+import type { Metadata } from "next";
 import SectionHeading from "@/components/ui/SectionHeading";
 import QuoteForm from "@/components/quote/QuoteForm";
 import { Truck, Phone, MessageCircle, Clock, ShieldCheck } from "lucide-react";
 import { DISPLAY_PHONE, ALT_PHONE_1, getGeneralWhatsAppUrl } from "@/lib/whatsapp";
+import { getEquipmentItems } from "@/lib/equipmentService";
 
-export default function QuotePage() {
+export const metadata: Metadata = {
+  title: "Get an Instant Event Rental Quote | WhatsApp Quotation Ibadan",
+  description:
+    "Request a fast event equipment rental quotation from FUNKAY RENTAL SERVICES in Elebu Moniya, Ibadan. Select chairs, tables, tents, and receive an instant estimate on WhatsApp.",
+};
+
+// Revalidate quote page statically every 1 hour (ISR)
+export const revalidate = 3600;
+
+export default async function QuotePage() {
+  const initialEquipment = await getEquipmentItems();
+
   return (
     <div className="py-12 sm:py-16 bg-slate-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -17,7 +30,7 @@ export default function QuotePage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
           {/* Main Form (8 Cols) */}
           <div className="lg:col-span-8">
-            <QuoteForm />
+            <QuoteForm initialEquipment={initialEquipment} />
           </div>
 
           {/* Sidebar Info (4 Cols) */}
