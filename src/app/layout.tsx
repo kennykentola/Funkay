@@ -98,6 +98,7 @@ export default function RootLayout({
     "name": "FUNKAY RENTAL SERVICES",
     "alternateName": [
       "Funkay Rentals",
+      "Funkay",
       "Funkay Event Rentals",
       "Funkay Rentals Ibadan",
       "Funkay Moniya",
@@ -112,7 +113,7 @@ export default function RootLayout({
     "logo": "https://funkay.vercel.app/icon.jpg",
     "url": "https://funkay.vercel.app",
     "telephone": [DISPLAY_PHONE, ALT_PHONE_1, ALT_PHONE_2],
-    "email": "info@funkayrentals.com",
+    "email": "williams.akanji@gmail.com ",
     "address": {
       "@type": "PostalAddress",
       "streetAddress": BUSINESS_ADDRESS,

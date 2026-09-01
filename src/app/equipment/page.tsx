@@ -12,6 +12,7 @@ export const metadata: Metadata = {
     "Funkay Equipment Catalogue",
     "Chair rental Moniya",
     "Canopy tent rental Ibadan",
+     "Funkay",
     "Banquet table rental Elebu Moniya",
     "Funkay Rentals inventory",
   ],
