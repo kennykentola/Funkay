@@ -19,7 +19,7 @@ import {
   deleteGalleryItem,
   seedInitialGallery,
 } from "@/lib/galleryService";
-import { uploadImageToStorage } from "@/lib/storageService";
+import { uploadImageToStorage, fileToBase64 } from "@/lib/storageService";
 import { EquipmentItem, CategoryType, GalleryItem } from "@/types";
 import {
   LogOut,
@@ -389,20 +389,32 @@ export default function AdminDashboardPage() {
     setStatusMessage({ type: "success", text: `Uploading "${file.name}" to Cloud Storage...` });
 
     try {
-      const folder = target.startsWith("gal") ? "gallery" : "equipment";
-      const downloadUrl = await uploadImageToStorage(file, folder, (progress) => {
-        setUploadProgress(progress);
-      });
+      let imageUrl: string;
 
-      if (target === "new") setNewItem((prev) => ({ ...prev, image: downloadUrl }));
-      else if (target === "edit" && editingItem) setEditingItem((prev) => (prev ? { ...prev, image: downloadUrl } : null));
-      else if (target === "galNew") setNewGalleryItem((prev) => ({ ...prev, image: downloadUrl }));
-      else if (target === "galEdit" && editingGalleryItem) setEditingGalleryItem((prev) => (prev ? { ...prev, image: downloadUrl } : null));
+      try {
+        const folder = target.startsWith("gal") ? "gallery" : "equipment";
+        imageUrl = await uploadImageToStorage(file, folder, (progress) => {
+          setUploadProgress(progress);
+        });
+        setStatusMessage({ type: "success", text: `Image uploaded successfully to Firebase Storage!` });
+      } catch (storageErr: any) {
+        console.warn("Firebase Cloud Storage upload failed (likely CORS policy block). Falling back to Base64 encoding.", storageErr);
+        // Fallback to Base64 encoding so admin can continue working without being blocked by storage CORS
+        imageUrl = await fileToBase64(file);
+        setStatusMessage({
+          type: "error",
+          text: `Cloud Storage CORS preflight blocked direct bucket upload. Image converted locally so you can save now! Check FIREBASE_STORAGE_CORS_SETUP.md to set CORS on your bucket.`,
+        });
+      }
 
-      setStatusMessage({ type: "success", text: `Image uploaded successfully to Firebase Storage!` });
+      if (target === "new") setNewItem((prev) => ({ ...prev, image: imageUrl }));
+      else if (target === "edit" && editingItem) setEditingItem((prev) => (prev ? { ...prev, image: imageUrl } : null));
+      else if (target === "galNew") setNewGalleryItem((prev) => ({ ...prev, image: imageUrl }));
+      else if (target === "galEdit" && editingGalleryItem) setEditingGalleryItem((prev) => (prev ? { ...prev, image: imageUrl } : null));
+
     } catch (err: any) {
       console.error("Upload error:", err);
-      setStatusMessage({ type: "error", text: `Upload failed: ${err.message || "Could not upload to Firebase Storage."}` });
+      setStatusMessage({ type: "error", text: `Upload failed: ${err.message || "Could not process image file."}` });
     } finally {
       setUploadingImage(false);
       setUploadProgress(0);

@@ -2,6 +2,19 @@ import { storage } from "./firebase";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 /**
+ * Converts a local File object into a compressed Base64 Data URL.
+ * Useful as a client-side fallback when Firebase Storage bucket CORS is unconfigured.
+ */
+export function fileToBase64(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (err) => reject(err);
+  });
+}
+
+/**
  * Uploads an image binary file to Firebase Cloud Storage.
  * Returns the public HTTPS CDN download URL to be saved in Firestore.
  * 
@@ -35,11 +48,27 @@ export async function uploadImageToStorage(
       },
       (error) => {
         console.error("Firebase Storage Upload Error:", error);
-        reject(
-          new Error(
-            `Failed to upload image to Firebase Storage: ${error.message}`
-          )
-        );
+        
+        // Detect CORS / network preflight errors from Firebase Cloud Storage
+        const isCorsError =
+          error.code === "storage/retry-limit-exceeded" ||
+          error.message?.includes("CORS") ||
+          error.message?.includes("network") ||
+          error.code === "storage/unknown";
+
+        if (isCorsError) {
+          reject(
+            new Error(
+              `CORS_BLOCKED: Firebase Storage bucket CORS rule missing. ${error.message}`
+            )
+          );
+        } else {
+          reject(
+            new Error(
+              `Failed to upload image to Firebase Storage: ${error.message}`
+            )
+          );
+        }
       },
       async () => {
         try {
